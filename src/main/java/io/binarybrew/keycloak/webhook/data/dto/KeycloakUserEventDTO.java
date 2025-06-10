@@ -4,9 +4,6 @@
 package io.binarybrew.keycloak.webhook.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Data Transfer Object (DTO) for Keycloak user events sent to webhook endpoints.
@@ -18,10 +15,20 @@ import lombok.NoArgsConstructor;
  * 
  * The fields are serialized to JSON using the specified property names through @JsonProperty annotations.
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class KeycloakUserEventDTO {
+
+    public KeycloakUserEventDTO(String type, String userId, String userName, String email, String firstName, String lastName, Boolean emailVerified, Long createdTimestamp, String userIp, String userAgent) {
+        this.type = type;
+        this.userId = userId;
+        this.userName = userName;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailVerified = emailVerified;
+        this.createdTimestamp = createdTimestamp;
+        this.userIp = userIp;
+        this.userAgent = userAgent;
+    }
 
     /**
      * The type of Keycloak event that occurred (e.g., REGISTER, LOGIN, UPDATE_PROFILE).

@@ -3,7 +3,7 @@
  */
 package io.binarybrew.keycloak.webhook.listeners;
 
-import lombok.extern.slf4j.Slf4j;
+import org.jboss.logging.Logger;
 import org.keycloak.Config;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventListenerProviderFactory;
@@ -21,13 +21,14 @@ import java.util.concurrent.TimeUnit;
  * for asynchronous execution of webhook requests. The executor service is shared
  * across all provider instances created by this factory.
  */
-@Slf4j
 public class WebhookEventListenerProviderFactory implements EventListenerProviderFactory {
 
     public static final int THREAD_POOL = 5;
     public static final String PROVIDER_ID = "brew-event-webhook";
 
     private ScheduledExecutorService scheduledExecutorService;
+
+    public static final Logger LOGGER = Logger.getLogger(WebhookEventListenerProvider.class);
 
     @Override
     public EventListenerProvider create(KeycloakSession session) {
@@ -56,11 +57,11 @@ public class WebhookEventListenerProviderFactory implements EventListenerProvide
                     // Force shutdown if tasks don't terminate in time
                     scheduledExecutorService.shutdownNow();
                     if (!scheduledExecutorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                        log.error("ExecutorService did not terminate");
+                        LOGGER.error("ExecutorService did not terminate");
                     }
                 }
             } catch (InterruptedException e) {
-                log.error("ExecutorService exception occurred {}", e.getMessage());
+                LOGGER.errorf("ExecutorService exception occurred %s", e.getMessage());
                 // (Re)Cancel if current thread also interrupted
                 scheduledExecutorService.shutdownNow();
                 // Preserve interrupt status

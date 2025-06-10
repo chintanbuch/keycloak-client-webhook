@@ -7,7 +7,7 @@ A Keycloak extension that sends webhook notifications to external APIs when spec
 This extension integrates with Keycloak's event system to capture user-related events such as registration, login, logout, and password resets. When these events occur, the extension sends HTTP POST requests with user data to a configured webhook endpoint.
 
 Key features:
-- Listens for REGISTER, LOGIN, LOGOUT, RESET_PASSWORD, VERIFY_EMAIL, and UPDATE_EMAIL events
+- Listens for REGISTER, REGISTER_ERROR, LOGIN, LOGOUT, RESET_PASSWORD, VERIFY_EMAIL, UPDATE_EMAIL, and DELETE_ACCOUNT events
 - Sends structured JSON payloads with comprehensive user information
 - Supports authentication with API keys
 - Implements retry logic with exponential backoff
@@ -16,14 +16,14 @@ Key features:
 ## Requirements
 
 - Java 17 or higher
-- Keycloak 26.2.2 or compatible version
+- Keycloak 26.2.5 or a compatible version
 - Maven for building the project
 
 ## Installation
 
 1. Build the extension:
    ```bash
-   mvn clean package
+   make build
    ```
 
 2. Copy the generated JAR file to Keycloak's providers directory:
@@ -53,6 +53,7 @@ The webhook URL and API key are configured at the client level. For each client 
 4. Add the following attributes:
    - `api.url`: The URL of your webhook endpoint (e.g., `https://your-api.example.com/webhooks/keycloak`)
    - `api.key`: The API key or token for authenticating with your webhook endpoint
+   - `disable.autologin`: Set to "true" to prevent automatic login after registration (useful when additional verification steps are required)
 
 ## Webhook Payload
 
@@ -77,11 +78,13 @@ The extension sends a JSON payload with the following structure:
 
 The extension currently listens for the following Keycloak events:
 - `REGISTER`: When a new user registers
+- `REGISTER_ERROR`: When a user registration fails
 - `LOGIN`: When a user logs in
 - `LOGOUT`: When a user logs out
 - `RESET_PASSWORD`: When a user resets their password
 - `VERIFY_EMAIL`: When a user verifies their email address
 - `UPDATE_EMAIL`: When a user's email address is updated
+- `DELETE_ACCOUNT`: When a user account is deleted
 
 ## Troubleshooting
 
